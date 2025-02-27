@@ -3,45 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Login - Weather App</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #f72585;
+            --text-light: #f8f9fa;
+            --text-dark: #212529;
+            --bg-light: #ffffff;
+            --bg-dark: #121212;
+            --card-light: #f0f4ff;
+            --card-dark: #1e1e1e;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-theme {
+            --primary: #4cc9f0;
+            --primary-dark: #3a97c9;
+            --text-light: #212529;
+            --text-dark: #f8f9fa;
+            --bg-light: #121212;
+            --bg-dark: #ffffff;
+            --card-light: #1e1e1e;
+            --card-dark: #f0f4ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+            background-image: linear-gradient(135deg, rgba(67, 97, 238, 0.1) 0%, rgba(76, 201, 240, 0.1) 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 85%;
+            max-width: 420px;
+            padding: 2rem;
+            border-radius: 24px;
+            background: var(--bg-light);
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            transition: var(--transition);
+            animation: appear 0.8s ease-out;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--primary);
+            transition: var(--transition);
+            z-index: 10;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            background-color: var(--card-light);
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            transform: translateY(-2px);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(67, 97, 238, 0.3);
+        }
+
+        p {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <div class="login-container">
+    <button id="theme-toggle" class="theme-toggle">☀️</button>
+    <div class="container">
+        <h2>Login</h2>
         <form id="loginForm">
-            <h2>Login <i class="fa-solid fa-cloud-moon-rain"></i> </h2>
-
-            <div class="input-group">
+            <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
             </div>
-
-            <div class="input-group">
+            <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-
-            <div class="button-group">
-                <button id="submit-btn" type="submit">Login</button>
-                
-            </div> 
+            <button id="submit-btn" type="submit">Login</button>
         </form>
     </div>
-
     <script>
-        const username = document.getElementById("username");
-        const password = document.getElementById("password");
-        const submit_btn = document.getElementById("submit-btn");
-
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+        });
+        
         function validateLogin(event) {
             event.preventDefault();
-            if (username.value !== "" && password.value === "password123") {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            if (username !== "" && password === "password123") {
                 window.location.href = '/today.html';
             } else {
                 alert("Error! Invalid username or password.");
             }
         }
-
-        submit_btn.addEventListener("click", validateLogin);
+        
+        document.getElementById("submit-btn").addEventListener("click", validateLogin);
     </script>
 </body>
 </html>
