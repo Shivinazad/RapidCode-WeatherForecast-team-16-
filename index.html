@@ -1,3 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <style>
+        /* General reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body and page background */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f8fa; /* Light cool gray background */
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Header styling */
+        header {
+            background: linear-gradient(135deg, #1e3d77, #4e73df); /* Gradient using complementary blues */
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            flex-shrink: 0;
+            border-bottom: 4px solid #4e73df;
+            width: 100%;
+        }
+
+        header h1 {
+            font-size: 4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .button2 {
+            margin-top: 30px;
+        }
+
+        .button2 a {
+            background-color: #4e73df;
+            color: white;
+            padding: 16px 40px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: all 0.3s ease-out;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .button2 a:hover {
+            background-color: #2a4d7f;
+            transform: translateY(-5px);
+        }
+
+        .button2 a:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Weather Card styles */
+        .weather-card {
+            background-color: #ffffff;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px auto;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .weather-card:hover {
+            background-color: #e1eff7; /* Light blue background on hover */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .weather-card .city-name {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #1e3d77; /* Deep blue color */
+        }
+
+        .weather-card .temperature {
+            font-size: 4em;
+            color: #ffbf00; /* Gold color for temperature */
+            margin-bottom: 15px;
+        }
+
+        .weather-card .condition {
+            font-size: 1.6em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .weather-card .icon {
+            font-size: 4em;
+            margin-bottom: 10px;
+            color: #ffbf00;
+        }
+
+        .weather-card .details {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        /* Footer styling */
+        footer {
+            background-color: #1e3d77;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            flex-shrink: 0;
+            width: 100%;
+        }
+
+        #logo {
+            width: 120px;
+            height: auto;
+            margin-top: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        #logo:hover {
+            transform: scale(1.1); /* Slight scaling effect on logo hover */
+        }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 3em;
+            }
+
+            header p {
+                font-size: 1.2em;
+            }
+
+            .button2 a {
+                font-size: 16px;
+                padding: 14px 35px;
+            }
+
+            .weather-card {
+                width: 100%;
+                padding: 20px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SKYCAST</h1>
+        <p>Your Daily Forecast at a Glance</p>
+
+        <div class="button2">
+            <a href="today.html">GET STARTED</a>
+        </div>
+    </header>
+
+    <!-- Weather Card -->
+    <div class="weather-card" id="weather-card">
+        <div class="city-name">Jansla, Punjab</div>
+        <div class="icon" id="weather-icon"><i class="fa-solid fa-sun"></i></div>
+        <div class="temperature" id="temp">--°C</div>
+        <div class="condition" id="condition">Loading...</div>
+        <div class="details" id="details">Please wait while we fetch the weather data...</div>
+    </div>
+
+    <footer>
+        <img id="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTANhagkcL0eJSmeUADGEw8eYucwc4Uqe4R2g&s" alt="#">
+    </footer>
+
+    <script>
+        // JavaScript for fetching weather data
+        const apiKey = 'YOUR_API_KEY'; // Replace with your weather API key
+        const city = 'Jansla'; // Default city (can be changed)
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+        // Fetch weather data
+        async function fetchWeather() {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.cod === 200) {
+                    // Update the weather details on the page
+                    document.getElementById('temp').textContent = `${data.main.temp}°C`;
+                    document.getElementById('condition').textContent = data.weather[0].main;
+                    document.getElementById('details').textContent = `Humidity: ${data.main.humidity}% | Wind: ${data.wind.speed} m/s`;
+                    document.getElementById('weather-card').style.display = 'block';
+
+                    // Add weather icon dynamically
+                    const weatherIcon = data.weather[0].icon;
+                    const iconUrl = `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`;
+                    document.getElementById('weather-icon').innerHTML = `<img src="${iconUrl}" alt="${data.weather[0].description}">`;
+                } else {
+                    // In case of an error, display a message
+                    document.getElementById('condition').textContent = 'Error fetching data';
+                    document.getElementById('details').textContent = 'Please check the city name or try again later.';
+                }
+            } catch (error) {
+                // Handle any errors
+                document.getElementById('condition').textContent = 'Error';
+                document.getElementById('details').textContent = 'Unable to fetch weather data. Please try again later.';
+            }
+        }
+
+        // Call the fetchWeather function when the page loads
+        window.onload = fetchWeather;
+    </script>
+</body>
+</html>
 
 <!DOCTYPE html>
 <html lang="en">
