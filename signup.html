@@ -4,28 +4,460 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - Weather App</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #f72585;
+            --text-light: #f8f9fa;
+            --text-dark: #212529;
+            --bg-light: #ffffff;
+            --bg-dark: #121212;
+            --card-light: #f0f4ff;
+            --card-dark: #1e1e1e;
+            --success: #4cc9f0;
+            --error: #e63946;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.1);
+        }
 
-</style>
+        .dark-theme {
+            --primary: #4cc9f0;
+            --primary-dark: #3a97c9;
+            --text-light: #212529;
+            --text-dark: #f8f9fa;
+            --bg-light: #121212;
+            --bg-dark: #ffffff;
+            --card-light: #1e1e1e;
+            --card-dark: #f0f4ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+            background-image: linear-gradient(135deg, rgba(67, 97, 238, 0.1) 0%, rgba(76, 201, 240, 0.1) 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .parallax-layer-1, .parallax-layer-2, .parallax-layer-3 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: var(--transition);
+        }
+
+        .parallax-layer-1 {
+            background: radial-gradient(circle at 10% 20%, rgba(76, 201, 240, 0.05) 0%, rgba(67, 97, 238, 0.05) 90.1%);
+            transform: translateZ(-10px) scale(2);
+        }
+
+        .parallax-layer-2 {
+            background: radial-gradient(circle at 90% 10%, rgba(247, 37, 133, 0.03) 0%, rgba(67, 97, 238, 0.03) 90.1%);
+            transform: translateZ(-5px) scale(1.5);
+        }
+
+        .parallax-layer-3 {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234361ee' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            transform: translateZ(0) scale(1);
+        }
+
+        .container {
+            width: 85%;
+            max-width: 480px;
+            padding: 2rem;
+            border-radius: 24px;
+            background: var(--bg-light);
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            transition: var(--transition);
+            transform: translateY(0);
+            animation: appear 0.8s ease-out;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(135deg, transparent, rgba(67, 97, 238, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 6s infinite;
+            z-index: -1;
+        }
+
+        .theme-toggle {
+            position: fixed; /* Change to fixed position */
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--primary);
+            transition: var(--transition);
+            z-index: 10;
+            width: 40px; /* Set a fixed width */
+            height: 40px; /* Set a fixed height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(45deg);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--card-light);
+            color: var(--text-dark);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            transform: translateY(-2px);
+        }
+
+        input::placeholder {
+            color: #adb5bd;
+        }
+
+        .form-group.focused label {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: var(--transition);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(67, 97, 238, 0.3);
+        }
+
+        button:hover::before {
+            left: 100%;
+            transition: 0.7s;
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        p {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        /* Bento grid for weather preview */
+        .weather-preview {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 12px;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .weather-card {
+            background-color: var(--card-light);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+            transition: var(--transition);
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .weather-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .weather-card h4 {
+            color: var(--primary);
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .weather-card p {
+            color: var(--text-dark);
+            margin: 0;
+            font-size: 0.8rem;
+        }
+
+        .weather-card.large {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
+        }
+
+        /* Animations */
+        @keyframes appear {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-200%) rotate(45deg); /* Start completely off the screen */
+            }
+            50% {
+                transform: translateX(200%) rotate(45deg); /* Move completely off the screen */
+            }
+            100% {
+                transform: translateX(-200%) rotate(45deg); /* Return to the starting position */
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Loading indicator */
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading.active {
+            opacity: 1;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* Error indicators */
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            20%, 60% {
+                transform: translateX(-5px);
+            }
+            40%, 80% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 95%;
+                padding: 1rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .weather-preview {
+                grid-template-columns: 1fr;
+            }
+
+            .weather-card.large {
+                grid-column: span 1;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="parallax-bg">
+        <div class="parallax-layer-1"></div>
+        <div class="parallax-layer-2"></div>
+        <div class="parallax-layer-3"></div>
+    </div>
+    
     <div class="container">
-        <h2>Sign Up </h2>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">☀️</button>
+        <div class="loading" id="loading-bar"></div>
+        <h2>Sign Up</h2>
         <form id="signup-form" onsubmit="return validateForm()">
             <div class="form-group">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                <div id="username-error" class="error-message">Username must be at least 3 characters</div>
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <div id="email-error" class="error-message">Please enter a valid email address</div>
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <div id="password-error" class="error-message">Password must be at least 6 characters</div>
             </div>
             <div class="form-group">
                 <label for="confirm-password">Confirm Password:</label>
                 <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                <div id="confirm-password-error" class="error-message">Passwords do not match</div>
+            </div>
+            <div class="weather-preview">
+                <div class="weather-card large">
+                    <h4>Weather Preview</h4>
+                    <p>Sign up to access real-time forecasts</p>
+                </div>
+                <div class="weather-card">
+                    <h4>Daily Reports</h4>
+                    <p>Detailed insights</p>
+                </div>
+                <div class="weather-card">
+                    <h4>Personalized Alerts</h4>
+                    <p>Stay informed</p>
+                </div>
             </div>
             <button type="submit">Sign Up</button>
             <p>Already have an account? <a href="login.html">Login</a></p>
@@ -33,38 +465,142 @@
     </div>
 
     <script>
-        // Function to validate the form
-function validateForm() {
-    // Get form values
-    var username = document.getElementById("username").value;
-    var email = document.getElementById("email").value;
-    var password = document.getElementById("password").value;
-    var confirmPassword = document.getElementById("confirm-password").value;
-
-    // Check if all fields are filled
-    if (username == "" || email == "" || password == "" || confirmPassword == "") {
-        alert("All fields must be filled!");
-        return false;
-    }
-
-    // Check if password and confirm password match
-    if (password !== confirmPassword) {
-        alert("Passwords do not match!");
-        return false;
-    }
-
-    // Check if the email format is correct
-    var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    if (!emailPattern.test(email)) {
-        alert("Please enter a valid email address!");
-        return false;
-    }
-
-    // Form is valid
-    alert("Sign up successful!");
-    return true;
-}
-
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or use preferred color scheme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            body.classList.add('dark-theme');
+            themeToggle.innerHTML = '🌙';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-theme');
+            if (body.classList.contains('dark-theme')) {
+                localStorage.setItem('theme', 'dark');
+                themeToggle.innerHTML = '🌙';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeToggle.innerHTML = '☀️';
+            }
+        });
+        
+        // Parallax effect on mouse movement
+        document.addEventListener('mousemove', (e) => {
+            const layers = document.querySelectorAll('.parallax-layer-1, .parallax-layer-2, .parallax-layer-3');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            layers.forEach((layer, index) => {
+                const speed = (index + 1) * 20;
+                const offsetX = (x - 0.5) * speed;
+                const offsetY = (y - 0.5) * speed;
+                layer.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${2 - index * 0.5})`;
+            });
+        });
+        
+        // Enhance form with focus effects and validation
+        const inputs = document.querySelectorAll('input');
+        
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', () => {
+                if (input.value === '') {
+                    input.parentElement.classList.remove('focused');
+                }
+            });
+            
+            // Check for existing input on page load
+            if (input.value !== '') {
+                input.parentElement.classList.add('focused');
+            }
+        });
+        
+        // Enhanced form validation
+        function validateForm() {
+            const loadingBar = document.getElementById('loading-bar');
+            loadingBar.classList.add('active');
+            
+            // Get form values
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+            
+            // Reset error messages
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(msg => {
+                msg.style.display = 'none';
+            });
+            
+            let isValid = true;
+            
+            // Validate username
+            if (username.length < 3) {
+                document.getElementById('username-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate email
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailPattern.test(email)) {
+                document.getElementById('email-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate password
+            if (password.length < 6) {
+                document.getElementById('password-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Confirm passwords match
+            if (password !== confirmPassword) {
+                document.getElementById('confirm-password-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Simulate submission with loading animation
+            setTimeout(() => {
+                loadingBar.classList.remove('active');
+                
+                if (isValid) {
+                    // Show success message instead of alert
+                    const container = document.querySelector('.container');
+                    const form = document.getElementById('signup-form');
+                    
+                    // Save form data (would normally send to server)
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('email', email);
+                    
+                    // Replace form with success message
+                    form.innerHTML = `
+                        <div style="text-align: center; animation: appear 0.8s ease-out;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            <h3 style="color: var(--success); margin: 16px 0;">Sign up successful!</h3>
+                            <p style="margin-bottom: 24px;">Thank you for joining our weather community.</p>
+                            <div class="weather-preview">
+                                <div class="weather-card large" style="animation: float 3s infinite ease-in-out;">
+                                    <h4>Welcome, ${username}!</h4>
+                                    <p>Your weather journey begins now</p>
+                                </div>
+                            </div>
+                            <a href="login.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: var(--primary); color: white; border-radius: 12px; text-decoration: none;">Continue to Login</a>
+                        </div>
+                    `;
+                }
+            }, 1000);
+            
+            return false; // Prevent actual form submission
+        }
     </script>
 </body>
 </html>
